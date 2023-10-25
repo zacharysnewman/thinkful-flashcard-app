@@ -29,61 +29,67 @@ function Layout() {
 
   // Breadcrumbs
   useEffect(() => {
-    // readDeck(parsedDeckId).then((deck) => {
-    const path = location.pathname;
-    const pathParts = path.split("/").filter((part) => part !== "");
+    const buildBreadcrumbs = async () => {
+      const path = location.pathname;
+      const pathParts = path.split("/").filter((part) => part !== "");
 
-    // Initialize breadcrumb trail with "Home" for the root route
-    let breadcrumbTrail = [{ url: "/", label: " 🏠 Home" }];
+      // Initialize breadcrumb trail with "Home" for the root route
+      let breadcrumbTrail = [{ url: "/", label: " 🏠 Home" }];
 
-    // Create an array of breadcrumb objects based on the route
-    let cardId;
+      // Create an array of breadcrumb objects based on the route
+      let cardId;
 
-    if (pathParts.length > 0) {
-      breadcrumbTrail = breadcrumbTrail.concat(
-        pathParts.map((part, index) => {
-          // Customize breadcrumb labels based on the route
-          let label = part;
+      if (pathParts.length > 0) {
+        breadcrumbTrail = breadcrumbTrail.concat(
+          await Promise.all(
+            pathParts.map(async (part, index) => {
+              // Customize breadcrumb labels based on the route
+              let label = part;
 
-          part = !isNaN(parseInt(part)) ? "id" : part;
-          const id = parseInt(part);
-          // const deck = readDeck(id);
-
-          switch (part) {
-            case "decks":
-            case "cards":
-              return undefined;
-            case "new":
-              label = "Add Card";
-              break;
-            case "id":
-              if (index === 1) {
-                label = "deck.name";
-              } else if (index === 3) {
-                cardId = part;
-                return undefined;
+              const id = parseInt(part);
+              part = !isNaN(id) ? "id" : part;
+              let deck;
+              if (id) {
+                deck = await readDeck(id);
               }
-              break;
-            case "study":
-              label = "Study";
-              break;
-            case "edit":
-              label = index === 4 ? `Edit Card ${cardId}` : "Edit";
-              break;
-            default:
-              label = "WHO DUN THIS?";
-              break;
-          }
-          return {
-            url: `/${pathParts.slice(0, index + 1).join("/")}`,
-            label,
-          };
-        })
-      );
-    }
 
-    setBreadcrumbs(breadcrumbTrail);
-    // });
+              switch (part) {
+                case "decks":
+                case "cards":
+                  return undefined;
+                case "new":
+                  label = "Add Card";
+                  break;
+                case "id":
+                  if (index === 1) {
+                    label = deck.name;
+                  } else if (index === 3) {
+                    return undefined;
+                  }
+                  break;
+                case "study":
+                  label = "Study";
+                  break;
+                case "edit":
+                  label = index === 4 ? `Edit Card ${id}` : "Edit";
+                  break;
+                default:
+                  label = "WHO DUN THIS?";
+                  break;
+              }
+              return {
+                url: `/${pathParts.slice(0, index + 1).join("/")}`,
+                label,
+              };
+            })
+          )
+        );
+      }
+
+      setBreadcrumbs(breadcrumbTrail);
+    };
+
+    buildBreadcrumbs();
   }, [location.pathname]);
 
   const handleCreateDeck = (deck) => {
