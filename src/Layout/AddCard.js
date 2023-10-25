@@ -14,7 +14,7 @@ const AddCard = () => {
 
   useEffect(
     () => readDeck(parsedDeckId).then((deck) => setDeckName(deck.name)),
-    []
+    [parsedDeckId]
   );
 
   const handleSubmit = (e) => {

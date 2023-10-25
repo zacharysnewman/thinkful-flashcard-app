@@ -33,7 +33,7 @@ export default function Deck() {
     }
   };
 
-  useEffect(fetchDeck, []);
+  useEffect(fetchDeck, [parsedDeckId]);
 
   return (
     <div className="deck">

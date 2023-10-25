@@ -20,7 +20,7 @@ const Study = () => {
       setDeckName(deck.name);
       setCards(deck.cards);
     });
-  }, []);
+  }, [parsedDeckId]);
 
   const showRestartPrompt = () => {
     if (

@@ -18,7 +18,7 @@ export default function EditCard() {
       setFrontSide(card.front);
       setBackSide(card.back);
     });
-  }, []);
+  }, [parsedCardId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

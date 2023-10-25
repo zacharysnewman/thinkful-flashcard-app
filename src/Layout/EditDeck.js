@@ -16,7 +16,7 @@ export default function EditDeck() {
       setDeckName(deck.name);
       setDeckDescription(deck.description);
     });
-  }, []);
+  }, [parsedDeckId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
