@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  Switch,
-  Route,
-  useRouteMatch,
-  useLocation,
-  useParams,
-} from "react-router-dom";
-import { listDecks, createDeck, readDeck } from "../utils/api";
+import { Switch, Route, useRouteMatch, useLocation } from "react-router-dom";
+import { readDeck } from "../utils/api";
 import Header from "./Header";
 import NotFound from "./NotFound";
 import Home from "./Home";
@@ -20,12 +14,8 @@ import Breadcrumb from "./Breadcrumb";
 
 function Layout() {
   const { path } = useRouteMatch();
-  const [decks, setDecks] = useState([]);
-  const [cards, setCards] = useState([]);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const location = useLocation();
-  const { deckId } = useParams();
-  const parsedDeckId = parseInt(deckId);
 
   // Breadcrumbs
   useEffect(() => {
@@ -33,19 +23,13 @@ function Layout() {
       const path = location.pathname;
       const pathParts = path.split("/").filter((part) => part !== "");
 
-      // Initialize breadcrumb trail with "Home" for the root route
       let breadcrumbTrail = [{ url: "/", label: " 🏠 Home" }];
-
-      // Create an array of breadcrumb objects based on the route
-      let cardId;
 
       if (pathParts.length > 0) {
         breadcrumbTrail = breadcrumbTrail.concat(
           await Promise.all(
             pathParts.map(async (part, index) => {
-              // Customize breadcrumb labels based on the route
               let label = part;
-
               const id = parseInt(part);
               part = !isNaN(id) ? "id" : part;
               let deck;
@@ -58,7 +42,11 @@ function Layout() {
                 case "cards":
                   return undefined;
                 case "new":
-                  label = "Add Card";
+                  if (index === 1) {
+                    label = "Create Deck";
+                  } else {
+                    label = "Add Card";
+                  }
                   break;
                 case "id":
                   if (index === 1) {
@@ -91,38 +79,6 @@ function Layout() {
 
     buildBreadcrumbs();
   }, [location.pathname]);
-
-  const handleCreateDeck = (deck) => {
-    createDeck(deck).then((deckWithId) => setDecks([...decks, deckWithId]));
-    setDecks([...decks, deck]);
-  };
-
-  const handleDeleteDeck = (id) => {
-    setDecks(decks.filter((deck) => deck.id !== id));
-    setCards(cards.filter((card) => card.deckId !== id));
-  };
-
-  const handleEditDeck = (newDeck) => {
-    const updatedDecks = decks.map((deck) =>
-      deck.id === newDeck.id ? newDeck : deck
-    );
-    setDecks(updatedDecks);
-  };
-
-  const handleCreateCard = (card) => {
-    setCards([...cards, card]);
-  };
-
-  const handleDeleteCard = (id) => {
-    setCards(cards.filter((card) => card.id !== id));
-  };
-
-  const handleEditCard = (newCard) => {
-    const updatedCards = cards.map((card) =>
-      card.id === newCard.id ? newCard : card
-    );
-    setCards(updatedCards);
-  };
 
   return (
     <>
