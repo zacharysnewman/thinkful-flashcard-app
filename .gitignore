@@ -22,6 +22,8 @@ build/
 .vercel
 .screenshots/
 .qualified-attach
+.qualified-attach.json
+.attachignore
 
 npm-debug.log*
 yarn-debug.log*
