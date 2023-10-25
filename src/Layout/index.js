@@ -25,6 +25,7 @@ function Layout() {
 
       let breadcrumbTrail = [{ url: "/", label: " 🏠 Home" }];
 
+      let cardId;
       if (pathParts.length > 0) {
         breadcrumbTrail = breadcrumbTrail.concat(
           await Promise.all(
@@ -33,8 +34,12 @@ function Layout() {
               const id = parseInt(part);
               part = !isNaN(id) ? "id" : part;
               let deck;
-              if (id) {
-                deck = await readDeck(id);
+              if (id && index === 1) {
+                try {
+                  deck = await readDeck(id);
+                } catch (e) {
+                  console.log(e);
+                }
               }
 
               switch (part) {
@@ -52,6 +57,7 @@ function Layout() {
                   if (index === 1) {
                     label = deck.name;
                   } else if (index === 3) {
+                    cardId = id;
                     return undefined;
                   }
                   break;
@@ -59,7 +65,7 @@ function Layout() {
                   label = "Study";
                   break;
                 case "edit":
-                  label = index === 4 ? `Edit Card ${id}` : "Edit";
+                  label = index === 4 ? `Edit Card ${cardId}` : "Edit";
                   break;
                 default:
                   label = "WHO DUN THIS?";
