@@ -15,7 +15,9 @@ export default function Deck() {
   const parsedDeckId = parseInt(deckId);
   const history = useHistory();
 
-  const fetchDeck = () => readDeck(parsedDeckId).then((data) => setDeck(data));
+  const fetchDeck = () => {
+    readDeck(parsedDeckId).then((data) => setDeck(data));
+  };
 
   const handleDeleteDeckButton = (id) => {
     if (

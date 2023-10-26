@@ -12,10 +12,10 @@ const AddCard = () => {
   const { deckId } = useParams();
   const parsedDeckId = parseInt(deckId);
 
-  useEffect(
-    () => readDeck(parsedDeckId).then((deck) => setDeckName(deck.name)),
-    [parsedDeckId]
-  );
+  const fetchDeck = () => {
+    readDeck(parsedDeckId).then((deck) => setDeckName(deck.name));
+  };
+  useEffect(fetchDeck, [parsedDeckId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
